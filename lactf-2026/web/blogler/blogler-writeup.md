@@ -61,6 +61,8 @@ user: *id001
 ``` 
 The flag path is now ready. Now, clicking blogs will bring you to the blogs page of the user with your original username, but that one specific blog will print the flag because of `"content": mistune.html((blog_path / blog["name"]).read_text())` where `blog_path/../../flag` brings you to the flag file and `.read_text()` would allow the flag to be printed.
 
+`lactf{7m_g0nn4_bl0g_y0u}`
+
 
 
 ## Remediation
