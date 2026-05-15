@@ -35,4 +35,4 @@ lactf{us3_s4n1t1z3d_1npu7!!!}
 This exploitation takes advantage of the fact that we can inject SQL code into the POST request and the input is not thoroughly checked for attacks. Some ways to prevent these attacks is encoding the information transported by the request to the server or checking the received information on the server request to verify that it is a valid option from the dropdown list before passing it into the SQL command. 
 
 ## Other Things to Note
-The usage of `where '1'` actually only works in sqlite which is used for this local database because of sqlite's flexibility. This would not work in general non-sqlite cases.
+The usage of `where '1'` actually only works in sqlite which is used for this local database because of sqlite's flexibility. In certain cases such as PostgreSQL, this would not work because PostgreSQL strictly requires a boolean expression in its `where` clause. Instead, this will throw a syntax or argument error since an integer is used rather than a boolean.
