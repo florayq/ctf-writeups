@@ -3,7 +3,7 @@
 ## Context & Vulnerability
 This code creates an extensive reading application where a user can read pdfs/books that they are given the jurisdiction to access. According to the challenge description, we need to read the 'Flag' book which is only accessible by a user with admin authority whereas the user account provided to us only has the free tier authority.
 
-In the security folder of the challenge, specifically SecretGenerator.java, we following code:
+In the security folder of the challenge, specifically SecretGenerator.java, we have following code:
 ```
 private String generateRandomString(int len) {
     // not so random
