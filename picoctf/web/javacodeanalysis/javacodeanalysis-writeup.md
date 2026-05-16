@@ -10,48 +10,27 @@ private String generateRandomString(int len) {
     return "1234";
 }
 ```
-This is clearly a security concern as JWT (JSON Web Tokens) depends on this generateRandomString function for its secret key. 
+This is clearly a security concern. The application uses JWT (JSON Web Tokens) to authenticate logins and the JWT code depends on this generateRandomString function for its secret key. Since the secret key that is used for authenticating a user is not secure, it is possible that a malicious user can gain access to another user's account.
+
+## Background: JSON Web Tokens (JWT)
+A JSON Web Token (JWT) is a method for securely transmitting information between two parties through a compact, URL-safe JSON object. It is primarily used for authentication and authorization.
+A common example of JWT usage is authentication. In authentication, the user sends credentials to the server. The server verifies the credentials and creates a signed JWT that it returns to the client. In subsequent requests to protected resources that the client creates, this JWT is added to the header. The server can verify this JWT information to authorize the request is from a user with the sufficient privileges.
 
 ## Exploitation
-JWT's auth-token and token-payload can be found in Applications > Local Storage through the Inspect tool. Using the website jwt.io (JWT Debugger), one can decode this string: 
+JWT's auth-token and token-payload can be found in Applications > Local Storage through the Inspect tool. Using the website jwt.io (JWT Debugger), one can decode the string:
 
-eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiRnJlZSIsImlzcyI6ImJvb2tzaGVsZiIsImV4cCI6MTc3ODAyNDQxNSwiaWF0IjoxNzc3NDE5NjE1LCJ1c2VySWQiOjEsImVtYWlsIjoidXNlciJ9.VyYI8xivj2WZ5eLb-ml_MlgdPmmokEvSd8yg483IZCo
+![jwtio_decode](images/jwtio_decode.png)
 
-into 
-
-```
-{
-  "role": "Free",
-  "iss": "bookshelf",
-  "exp": 1778024415,
-  "iat": 1777419615,
-  "userId": 1,
-  "email": "user"
-}
-```
-
-from the code of the application, we can see that these are parameters for the user, including ones we're interested in like "role": "Free" and "userId": 1. 
+We can see that these are parameters for the user, including ones we're interested in like "role": "Free" and "userId": 1. 
 
 When we read through the code of the BookShelfConfig.java in the configs folder, we find that the code initializes the user and admin users with user's id being 1 and admin being 2. On the website, we also notice that there are three roles: Free, Premium, and Admin. Our goal is to get to Admin.
 
 Since the secret of the JWT was hard-coded as '1234', we can use that in the JWT Signature Verification section of jwt.io and encode the payload again, changing role to Admin and userId to 2. 
 
-```
-{
-  "role": "Admin",
-  "iss": "bookshelf",
-  "exp": 1778022069,
-  "iat": 1777417269,
-  "userId": 2,
-  "email": "user"
-}
-```
+![jwtio_encode](images/jwtio_encode.png)
 
-Using this payload and the new encoded JWT auth-token 
 
-eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQWRtaW4iLCJpc3MiOiJib29rc2hlbGYiLCJleHAiOjE3NzgwMjIwNjksImlhdCI6MTc3NzQxNzI2OSwidXNlcklkIjoyLCJlbWFpbCI6InVzZXIifQ.fh9qdjkyYO50o_Vfri7LsvdhSvSuqpOF9NEd5W5Ouyc
-
-we can replace the previous auth-token and token-payload.
+Using this payload and the new encoded JWT auth-token, we can replace the previous auth-token and token-payload.
 
 Refreshing the page, we receive the flag:
 
